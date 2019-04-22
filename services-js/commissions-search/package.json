@@ -12,12 +12,11 @@
     "react": "16.8.5",
     "react-apollo": "^2.1.9",
     "react-dom": "16.8.5",
-    "react-scripts": "1.1.4"
+    "react-scripts": "2.1.8"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && node scripts/add-symlinks.js",
-    "test": "CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "codebuild-deploy": "npx -p ../../deploy-tools.tgz s3-apps-deploy build",
     "prepare": "yarn run build"
