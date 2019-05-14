@@ -1,15 +1,10 @@
 import React from 'react';
-import App, { Container } from 'next/app';
+import App, { Container, AppContext, AppProps } from 'next/app';
 
 import { configure as mobxConfigure } from 'mobx';
 
 import { cache as emotionCache, hydrate } from 'emotion';
 import { CacheProvider } from '@emotion/core';
-
-interface AppInitialProps {
-  ctx: any;
-  Component: any;
-}
 
 interface InitialProps {
   pageProps: any;
@@ -30,15 +25,13 @@ if (typeof window !== 'undefined') {
 /**
  * Component to initialize Emotion and MobX.
  */
-export default class PublicNoticesApp extends App {
-  // TypeScript doesn't know that App already has a props member.
-  protected props: Props;
+export default class PublicNoticesApp extends App<Props> {
   private versionInterval: number | null = null;
 
   static async getInitialProps({
     Component,
     ctx,
-  }: AppInitialProps): Promise<InitialProps> {
+  }: AppContext): Promise<InitialProps> {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
       : {};
@@ -48,13 +41,8 @@ export default class PublicNoticesApp extends App {
     };
   }
 
-  constructor(props: Props) {
+  constructor(props: Props & AppProps<Props>) {
     super(props);
-
-    // We're a little hacky here because TypeScript doesn't have type
-    // information about App and doesn't know it's a component and that the
-    // super call above actually does this.
-    this.props = props;
 
     if (typeof window !== 'undefined') {
       const nextData = (window as any).__NEXT_DATA__;
