@@ -83,9 +83,12 @@ export default class BirthCheckoutPage extends React.Component<Props, State> {
       case 'confirmation':
         info = {
           page: 'confirmation',
-          orderId: query.orderId || '',
-          contactEmail: query.contactEmail || '',
-          stepCount: parseInt(query.stepCount || '8'),
+          orderId: (query.orderId && query.orderId.toString()) || '',
+          contactEmail:
+            (query.contactEmail && query.contactEmail.toString()) || '',
+          stepCount: parseInt(
+            (query.stepCount && query.stepCount.toString()) || '8'
+          ),
         };
         break;
       default:

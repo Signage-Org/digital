@@ -73,11 +73,11 @@ export default class ReceiptPage extends React.Component<Props> {
     { query: { id, contactEmail }, res },
     { deathCertificatesDao }
   ) => {
-    if (!id) {
+    if (!id || Array.isArray(id)) {
       throw new Error('Missing id');
     }
 
-    if (!contactEmail) {
+    if (!contactEmail || Array.isArray(contactEmail)) {
       throw new Error('Missing contactEmail');
     }
 

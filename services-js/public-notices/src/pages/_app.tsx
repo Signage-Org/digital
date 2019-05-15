@@ -1,18 +1,15 @@
 import React from 'react';
-import App, { Container, AppContext, AppProps } from 'next/app';
+import App, {
+  Container,
+  AppContext,
+  AppProps,
+  AppInitialProps,
+} from 'next/app';
 
 import { configure as mobxConfigure } from 'mobx';
 
 import { cache as emotionCache, hydrate } from 'emotion';
 import { CacheProvider } from '@emotion/core';
-
-interface InitialProps {
-  pageProps: any;
-}
-
-interface Props extends InitialProps {
-  Component: any;
-}
 
 if (typeof window !== 'undefined') {
   const nextData = (window as any).__NEXT_DATA__;
@@ -25,13 +22,13 @@ if (typeof window !== 'undefined') {
 /**
  * Component to initialize Emotion and MobX.
  */
-export default class PublicNoticesApp extends App<Props> {
+export default class PublicNoticesApp extends App {
   private versionInterval: number | null = null;
 
   static async getInitialProps({
     Component,
     ctx,
-  }: AppContext): Promise<InitialProps> {
+  }: AppContext): Promise<AppInitialProps> {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
       : {};
@@ -41,7 +38,7 @@ export default class PublicNoticesApp extends App<Props> {
     };
   }
 
-  constructor(props: Props & AppProps<Props>) {
+  constructor(props: AppProps) {
     super(props);
 
     if (typeof window !== 'undefined') {

@@ -75,7 +75,7 @@ class CertificatePage extends React.Component<Props, State> {
     'query' | 'res',
     'deathCertificatesDao'
   > = async ({ query: { id, backUrl }, res }, { deathCertificatesDao }) => {
-    if (!id) {
+    if (!id || Array.isArray(id)) {
       throw new Error('Missing id');
     }
 
@@ -88,7 +88,7 @@ class CertificatePage extends React.Component<Props, State> {
     return {
       id,
       certificate,
-      backUrl,
+      backUrl: (backUrl && backUrl.toString()) || null,
     };
   };
 

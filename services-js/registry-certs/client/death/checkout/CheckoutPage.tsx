@@ -83,8 +83,9 @@ export default class CheckoutPageController extends React.Component<
       case 'confirmation':
         info = {
           page: 'confirmation',
-          orderId: query.orderId || '',
-          contactEmail: query.contactEmail || '',
+          orderId: (query.orderId && query.orderId.toString()) || '',
+          contactEmail:
+            (query.contactEmail && query.contactEmail.toString()) || '',
         };
         break;
       default:

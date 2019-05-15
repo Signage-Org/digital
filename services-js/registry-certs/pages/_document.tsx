@@ -1,7 +1,13 @@
 /* eslint react/no-danger: 0 */
 import React from 'react';
-import { DocumentContext } from 'next';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, {
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+  DocumentInitialProps,
+  DocumentProps,
+} from 'next/document';
 import { extractCritical } from 'emotion-server';
 
 import { StatusModal, ContactForm } from '@cityofboston/react-fleet';
@@ -10,7 +16,6 @@ import { ScreenReaderSupport } from '@cityofboston/next-client-common';
 import styleTags from '../client/common/style-tags';
 
 type Props = {
-  __NEXT_DATA__: any;
   cacheParam: string;
   rollbarAccessToken: string | undefined;
   rollbarEnvironment: string;
@@ -20,11 +25,11 @@ type Props = {
   css: string;
 };
 
-export default class extends Document {
-  props: Props;
-
-  static getInitialProps({ renderPage }: DocumentContext): Props {
-    const page = renderPage();
+export default class extends Document<Props> {
+  static async getInitialProps({
+    renderPage,
+  }: DocumentContext): Promise<DocumentInitialProps & Props> {
+    const page = await renderPage();
     const styles = extractCritical(page.html);
 
     // This is set by our standard deployment process.
@@ -40,20 +45,21 @@ export default class extends Document {
       cacheParam,
       rollbarAccessToken: process.env.ROLLBAR_BROWSER_ACCESS_TOKEN,
       rollbarEnvironment:
-        process.env.ROLLBAR_ENVIRONMENT || process.env.NODE_ENV,
+        process.env.ROLLBAR_ENVIRONMENT ||
+        process.env.NODE_ENV ||
+        'development',
       rollbarVersion: process.env.GIT_REVISION,
     };
   }
 
-  constructor(props: Props) {
+  constructor(props: Props & DocumentProps) {
     super(props);
-    this.props = props;
 
     const { __NEXT_DATA__, ids } = props;
 
     // These are the ids for Emotion classes already on the page.
     if (ids) {
-      __NEXT_DATA__.ids = ids;
+      (__NEXT_DATA__ as any).ids = ids;
     }
   }
 

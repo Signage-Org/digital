@@ -44,13 +44,13 @@ class SearchPage extends React.Component<Props, State> {
     'query',
     'deathCertificatesDao'
   > = async ({ query }, { deathCertificatesDao }) => {
-    let q = query.q || '';
+    let q = (query.q && query.q.toString()) || '';
     let page = 1;
 
     let results: DeathCertificateSearchResults | null = null;
 
     if (q) {
-      page = parseInt(query.page, 10) || 1;
+      page = parseInt((query.page && query.page.toString()) || '1', 10);
 
       results = await deathCertificatesDao.search(q, page);
     }
