@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": false
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
+}

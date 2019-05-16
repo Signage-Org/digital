@@ -22,7 +22,7 @@
   "dependencies": {
     "compression": "^1.6.2",
     "core-js": "^2.6.4",
-    "next": "8.1.1-canary.28",
+    "next": "canary",
     "react": "16.8.5",
     "react-dom": "16.8.5"
   },

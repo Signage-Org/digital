@@ -3,11 +3,9 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "allowJs": false,
     "sourceMap": true,
     "declaration": false,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
     "forceConsistentCasingInFileNames": false,
     "module": "esnext",
     "isolatedModules": true,
@@ -18,8 +16,5 @@
     "lib/**/*",
     "pages/**/*",
     "server/**/*"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }
