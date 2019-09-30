@@ -241,6 +241,16 @@ export async function makeServer() {
         tags: ['health'],
       },
     });
+    // method: GET | url: /admin/ok
+    server.route({
+      method: 'GET',
+      path: '/admin/ok',
+      handler: () => 'ok',
+      options: {
+        // mark this as a health check so that it doesn’t get logged
+        tags: ['health'],
+      },
+    });
 
     await addGraphQl(server);
   } catch (err) {
