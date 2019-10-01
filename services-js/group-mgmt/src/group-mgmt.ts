@@ -16,23 +16,24 @@ import {
   LdapFilters,
   CustomAttributes,
   ResponseClass,
+  LDAPEnvClass,
 } from './server/interfaces';
 import { renameObjectKeys, remapObjKeys, returnBool } from './lib/helpers';
-import { ldapConfig } from './server/ldapConfig';
 import { typeDefs } from './server/graphql/typeDefs';
 
-const port = parseInt(process.env.PORT || '7000', 10);
+require('dotenv').config();
+
+const env = new LDAPEnvClass(process.env);
+// console.log('LDAP ENVs: ', env);
+const port = parseInt(env.LDAP_PORT || '7000', 10);
 const ldapClient = ldap.createClient({
-  url: ldapConfig.url,
+  url: env.LDAP_URL,
   reconnect: true,
 });
 
 const bindLdapClient = (force: Boolean = false) => {
-  if (
-    ldapConfig.bindDn === 'cn=svc_groupmgmt,cn=Users,o=localHDAPDev' ||
-    force
-  ) {
-    ldapClient.bind(ldapConfig.bindDn, ldapConfig.passw, function(err) {
+  if (env.LDAP_BIN_DN === 'cn=svc_groupmgmt,cn=Users,o=localHDAPDev' || force) {
+    ldapClient.bind(env.LDAP_BIN_DN, env.LDAP_PASSWORD, function(err) {
       if (err) {
         console.log('ldapClient.bind err: ', err);
       }
@@ -204,7 +205,7 @@ const searchWrapper = (
       reject();
     }
 
-    ldapClient.search(ldapConfig.baseDn, filterQryParams, function(err, res) {
+    ldapClient.search(env.LDAP_BASE_DN, filterQryParams, function(err, res) {
       if (err) {
         console.log('ldapsearch error: ', err);
       }
@@ -231,7 +232,7 @@ export async function makeServer() {
   };
 
   try {
-    // method: GET | url: /access-boston/api/v1/ok
+    // method: GET | url: /ok
     server.route({
       method: 'GET',
       path: '/access-boston/api/v1/ok',
@@ -241,10 +242,10 @@ export async function makeServer() {
         tags: ['health'],
       },
     });
-    // method: GET | url: /admin/ok
+    // method: GET | url: /ok
     server.route({
       method: 'GET',
-      path: '/admin/ok',
+      path: '/ok',
       handler: () => 'ok',
       options: {
         // mark this as a health check so that it doesn’t get logged
@@ -427,6 +428,7 @@ export default (async function startServer() {
   });
 
   console.log('await server.start');
+  // console.log('process: ', process.env);
   await server.start();
 
   console.log(`> Ready on http://localhost:${port}`);

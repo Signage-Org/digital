@@ -254,3 +254,41 @@ export const CustomAttributes = {
   default: ['dn', 'cn'],
   all: [],
 };
+
+export interface LDAP_ENV {
+  LDAP_URL?: string;
+  LDAP_BASE_DN: string;
+  LDAP_BIN_DN?: string;
+  LDAP_USER_DN?: string;
+  LDAP_SCOPE?: string;
+  LDAP_PASSWORD?: string;
+  LDAP_PORT?: string;
+}
+
+export class LDAPEnvClass implements LDAP_ENV {
+  LDAP_URL: string = '';
+  LDAP_BASE_DN: string = '';
+  LDAP_BIN_DN: string = '';
+  LDAP_USER_DN: string = '';
+  LDAP_SCOPE: string = '';
+  LDAP_PASSWORD: string = '';
+  LDAP_PORT: string = '7000';
+
+  constructor(opts: {
+    LDAP_URL?: any;
+    LDAP_BASE_DN?: any;
+    LDAP_BIN_DN?: any;
+    LDAP_USER_DN?: any;
+    LDAP_SCOPE?: any;
+    LDAP_PASSWORD?: any;
+    LDAP_PORT?: any;
+  }) {
+    (this.LDAP_URL = opts.LDAP_URL || 'ldap://localhost:388'),
+      (this.LDAP_BASE_DN = opts.LDAP_BASE_DN || 'dc=boston,dc=cob'),
+      (this.LDAP_BIN_DN = opts.LDAP_BIN_DN || 'cn=admin,dc=boston,dc=cob'),
+      (this.LDAP_USER_DN = opts.LDAP_USER_DN || ''),
+      (this.LDAP_SCOPE = opts.LDAP_SCOPE || 'sub'),
+      (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || 'GoodNewsEveryone'),
+      (this.LDAP_PORT = opts.LDAP_PORT || 7000);
+  }
+}
