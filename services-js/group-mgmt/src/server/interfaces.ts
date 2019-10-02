@@ -75,6 +75,7 @@ export interface Group {
   entrydn?: string;
   objectclass?: Array<[objectclass]>;
   displayname?: string;
+  ou?: string;
 }
 
 export class GroupClass implements Group {
@@ -87,6 +88,7 @@ export class GroupClass implements Group {
   entrydn: string = '';
   objectclass?: Array<[objectclass]> = [];
   displayname?: string = '';
+  ou?: string = '';
 
   constructor(opts: {
     dn?: any;
@@ -98,6 +100,7 @@ export class GroupClass implements Group {
     entrydn?: any;
     objectclass?: any;
     displayname?: any;
+    ou?: any;
   }) {
     opts = renameObjectKeys(remapObjKeys(this, opts), opts);
     const getOnlyActiveMembers = (arr: any) => {
@@ -131,6 +134,7 @@ export class GroupClass implements Group {
       (this.actualdn = opts.actualdn ? opts.actualdn : ''),
       (this.entrydn = opts.entrydn ? opts.entrydn : ''),
       (this.displayname = opts.displayname ? opts.displayname : ''),
+      (this.ou = opts.ou ? opts.ou : ''),
       (this.objectclass = objectclass);
   }
 }

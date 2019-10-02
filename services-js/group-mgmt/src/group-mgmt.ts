@@ -24,7 +24,6 @@ import { typeDefs } from './server/graphql/typeDefs';
 require('dotenv').config();
 
 const env = new LDAPEnvClass(process.env);
-// console.log('LDAP ENVs: ', env);
 const port = parseInt(env.LDAP_PORT || '7000', 10);
 const ldapClient = ldap.createClient({
   url: env.LDAP_URL,
@@ -262,6 +261,26 @@ export async function makeServer() {
 }
 
 const resolvers = {
+  Mutation: {
+    async updateGroupMembers() {
+      try {
+        const opts = arguments[1];
+        const changeOpts = new ldap.Change({
+          operation: opts.operation,
+          modification: {
+            uniquemember: [opts.uniquemember],
+          },
+        });
+        // console.log('updateGroupMembers > updateGroupMembers > changeOpts: ', changeOpts); // remapObjKeys
+        bindLdapClient();
+        ldapClient.modify(opts.dn, changeOpts, async () => {});
+      } catch (err) {
+        console.log('Mutation > updateGroupMembers > err: ', err);
+      }
+
+      return new ResponseClass({});
+    },
+  },
   Query: {
     async isPersonInactive(parent: any, args: any) {
       if (parent) {
@@ -352,26 +371,6 @@ const resolvers = {
         });
       });
       return groups;
-    },
-  },
-  Mutation: {
-    async updateGroupMembers() {
-      try {
-        const opts = arguments[1];
-        const changeOpts = new ldap.Change({
-          operation: opts.operation,
-          modification: {
-            uniquemember: [opts.uniquemember],
-          },
-        });
-        // console.log('updateGroupMembers > updateGroupMembers > changeOpts: ', changeOpts); // remapObjKeys
-        bindLdapClient();
-        ldapClient.modify(opts.dn, changeOpts, async () => {});
-      } catch (err) {
-        // console.log('Mutation > updateGroupMembers > err: ', err);
-      }
-
-      return new ResponseClass({});
     },
   },
 };

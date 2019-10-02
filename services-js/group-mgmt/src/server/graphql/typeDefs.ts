@@ -9,6 +9,7 @@ export const typeDefs = `
     entrydn: String
     objectclass: [String]
     displayname: String
+    ou: String
   }
 
   type Person {
@@ -48,7 +49,6 @@ export const typeDefs = `
     groupSearch(term: String!): [Group]!
     isPersonInactive(people: [String!]!): [String]!
     Person(limit: Int!): [Person!]!
-    Group(limit: Int!): [Group]
 	}
 	
   # Defines all available mutations.

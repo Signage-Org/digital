@@ -1,6 +1,17 @@
 export const convertOptionalArray = val => (Array.isArray(val) ? val : [val]);
 
-export const returnBool = (val: string = 'FALSE') => {
+/**
+ *
+ * @param {string} val - A string param
+ * @return {boolean} A Boolean value
+ * @description Converts a string Boolean back to its primative
+ * @default {boolean} Return a Boolean value (false)
+ *
+ * @example
+ *
+ *     returnBool('FALSE', false);
+ */
+export const returnBool = (val: String = 'FALSE') => {
   switch (val.toLocaleLowerCase()) {
     case 'true':
       return true;
@@ -11,16 +22,66 @@ export const returnBool = (val: string = 'FALSE') => {
   }
 };
 
-export const convertToBool = (val: any, base: Boolean = true) => {
-  let retVal: Boolean = returnBool(val);
-  if (base && typeof base === 'boolean' && val === null) {
+/**
+ *
+ * @param {string} val - A string param
+ * @param {boolean} base - A boolean param
+ * @return {boolean} A Boolean value
+ * @description Converts a string Boolean back to its primative, if not possible returns a default value that can be preset.
+ * @default {boolean} Return a Boolean value (false)
+ *
+ * @example
+ *
+ *     convertToBool('FALSE', true);
+ */
+export const convertToBool = (val: String, base: Boolean) => {
+  let retVal: Boolean = true;
+  try {
+    retVal = returnBool(val);
+  } catch (err) {
+    // console.log('Error converting to Boolean: convertToBool ', err);
+  }
+
+  if (base && typeof base === 'boolean') {
     retVal = base;
   }
   return retVal;
 };
 
-export const renameObjectKeys = (keysMap, obj) =>
-  Object.keys(obj).reduce(
+/**
+ *
+ * @param {object} keysMap - Object, key/value Object with renamed keys
+ * @param {object} targetObj - Object whose keys you want to rename
+ * @description Rename object keys using the keyMap object
+ *
+ * @example
+ *
+ *     renameObjectKeys(
+ *      {
+ *      dn: 'cn',
+ *      CN: 'cn',
+ *      isMemberof: 'ismemberof',
+ *      nsAccountLock: 'nsaccountlock',
+ *     },
+ *      {
+ *        dn: '',
+ *        cn: '100992',
+ *        ismemberof: [],
+ *        nsaccountlock: 'FALSE',
+ *        isSponsor: 'TRUE',
+ *      },
+ *     );
+ *     return {
+ *       dn: '',
+ *       cn: '100992',
+ *       ismemberof: [],
+ *       nsaccountlock: 'FALSE',
+ *       isSponsor: 'TRUE',
+ *     }
+ *
+ */
+export const renameObjectKeys = (keysMap, obj) => {
+  const retObj: object = Object.keys(obj).reduce(
     (acc, key) => ({
       ...acc,
       ...{ [keysMap[key] || key]: obj[key] },
@@ -28,6 +89,40 @@ export const renameObjectKeys = (keysMap, obj) =>
     {}
   );
 
+  return retObj;
+};
+
+/**
+ *
+ * @param {object} sourceObj - Object whose keys you'll use to remap target
+ * @param {object} targetObj - Object whose keys you want to remap
+ * @description Pair down and remap target object keys with the sourceObj keys
+ * @return {object} - Return object with the remapped keys and paired down to only the fields present in the sourceObj
+ *
+ * @example
+ *
+ *     remapObjKeys(
+ *      {
+ *        dn: '',
+ *        cn: '',
+ *        ismemberof: [],
+ *        nsaccountlock: '',
+ *      },
+ *      {
+ *        dn: '',
+ *        CN: '100992',
+ *        isMemberof: [],
+ *        nsAccountLock: 'FALSE',
+ *      },
+ *     );
+ *     return {
+ *      dn: 'cn',
+ *      CN: 'cn',
+ *      isMemberof: 'ismemberof',
+ *      nsAccountLock: 'nsaccountlock',
+ *     }
+ *
+ */
 export const remapObjKeys = (sourceObj, targetObj) => {
   const keyMapObj: Object = {};
   const optKeys = Object.keys(targetObj).map(key => key.toLocaleLowerCase());
@@ -37,7 +132,6 @@ export const remapObjKeys = (sourceObj, targetObj) => {
       keyMapObj[Object.keys(targetObj)[index]] = key;
     }
   }
-
   return keyMapObj;
 };
 
