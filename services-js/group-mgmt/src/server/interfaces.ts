@@ -58,6 +58,67 @@ export class ResponseClass implements Response {
   }
 }
 
+export interface ApiScopes {
+  BASE?: Number;
+  ONELEVEL?: Number;
+  SUBTREE?: Number;
+  SUBORDINATE?: Number;
+  DEFAULT?: Number;
+}
+
+export class Api_Scopes implements ApiScopes {
+  BASE: Number = 0;
+  ONELEVEL: Number = 1;
+  SUBTREE: Number = 2;
+  SUBORDINATE: Number = 3;
+  DEFAULT: Number = -1;
+
+  constructor(opts: {
+    BASE?: Number;
+    ONELEVEL?: Number;
+    SUBTREE?: Number;
+    SUBORDINATE?: Number;
+    DEFAULT?: Number;
+  }) {
+    (this.BASE = opts.BASE ? opts.BASE : 0),
+      (this.ONELEVEL = opts.ONELEVEL ? opts.ONELEVEL : 1),
+      (this.SUBTREE = opts.SUBTREE ? opts.SUBTREE : 2),
+      (this.SUBORDINATE = opts.SUBORDINATE ? opts.SUBORDINATE : 3),
+      (this.DEFAULT = opts.DEFAULT ? opts.DEFAULT : -1);
+  }
+}
+
+export interface SearchOptions {
+  base?: String;
+  scope?: Number;
+  filter?: String;
+  attrs?: String;
+  pagesize?: Number;
+}
+
+export class SearchOptionsClass implements SearchOptions {
+  base: String = '';
+  scope: Number = 2;
+  filter: String = '';
+  attrs: String = '';
+  pagesize: Number = 10;
+
+  constructor(opts: {
+    base?: String;
+    scope?: Number;
+    filter?: String;
+    attrs?: String;
+    pagesize?: Number;
+  }) {
+    const Scopes = new Api_Scopes({});
+    (this.base = opts.base ? opts.base : ''),
+      (this.scope = opts.scope ? opts.scope : Scopes.SUBTREE),
+      (this.filter = opts.filter ? opts.filter : ''),
+      (this.attrs = opts.attrs ? opts.attrs : ''),
+      (this.pagesize = opts.pagesize ? opts.pagesize : 10);
+  }
+}
+
 export class objectClassArray {
   objectclass: Array<[objectclass]> = [];
   constructor(opts: any) {
