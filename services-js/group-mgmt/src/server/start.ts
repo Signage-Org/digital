@@ -10,8 +10,10 @@ require('dotenv').config();
 const start = require('../group-mgmt').default;
 console.log('start.server');
 
-const shell = require('shelljs');
-shell.exec('top');
+// const shell = require('shelljs');
+// shell.exec('top');
+// shell.exec('top >/dev/null');
+// console.log('shell: ', shell);
 
 // console.log('process: ', process);
 
