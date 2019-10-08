@@ -337,7 +337,7 @@ export class LDAPEnvClass implements LDAP_ENV {
   LDAP_USER_DN: string = '';
   LDAP_SCOPE: string = '';
   LDAP_PASSWORD: string = '';
-  LDAP_PORT: string = '7000';
+  LDAP_PORT: string = '443';
 
   constructor(opts: {
     LDAP_URL?: any;
@@ -348,12 +348,15 @@ export class LDAPEnvClass implements LDAP_ENV {
     LDAP_PASSWORD?: any;
     LDAP_PORT?: any;
   }) {
-    (this.LDAP_URL = opts.LDAP_URL || 'ldap://localhost:388'),
+    (this.LDAP_URL =
+      opts.LDAP_URL || 'ldap://zdvds01.cityhall.boston.cob:2389'),
       (this.LDAP_BASE_DN = opts.LDAP_BASE_DN || 'dc=boston,dc=cob'),
-      (this.LDAP_BIN_DN = opts.LDAP_BIN_DN || 'cn=admin,dc=boston,dc=cob'),
-      (this.LDAP_USER_DN = opts.LDAP_USER_DN || ''),
+      (this.LDAP_BIN_DN =
+        opts.LDAP_BIN_DN || 'cn=svc_groupmgmt,cn=Users,o=localHDAPDev'),
+      (this.LDAP_USER_DN =
+        opts.LDAP_USER_DN || 'cn=svc_groupmgmt,cn=Users,dc=boston,cn=cob'),
       (this.LDAP_SCOPE = opts.LDAP_SCOPE || 'sub'),
-      (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || 'GoodNewsEveryone'),
-      (this.LDAP_PORT = opts.LDAP_PORT || 7000);
+      (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || '5!9ySn9gDN'),
+      (this.LDAP_PORT = opts.LDAP_PORT || 443);
   }
 }

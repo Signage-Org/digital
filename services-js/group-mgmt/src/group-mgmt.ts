@@ -24,7 +24,7 @@ import { typeDefs } from './server/graphql/typeDefs';
 require('dotenv').config();
 
 const env = new LDAPEnvClass(process.env);
-const port = parseInt(env.LDAP_PORT || '7000', 10);
+const port = parseInt(env.LDAP_PORT || '443', 10);
 const ldapClient = ldap.createClient({
   url: env.LDAP_URL,
   reconnect: true,
@@ -437,6 +437,7 @@ export default (async function startServer() {
   });
 
   console.log('await server.start');
+  console.log('env: ', env);
   // console.log('process: ', process.env);
   await server.start();
 
