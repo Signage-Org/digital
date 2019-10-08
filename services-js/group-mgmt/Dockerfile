@@ -40,7 +40,7 @@ RUN /app/scripts/generate-ssl-key.sh /app/services-js/$WORKSPACE
 RUN npx lerna run --stream --include-filtered-dependencies --scope services-js.$WORKSPACE prepare 
 RUN npx lerna run --stream --include-filtered-dependencies --scope services-js.$WORKSPACE prepare-deploy
 
-EXPOSE 3000
+EXPOSE 7000
 
 ENV NODE_ENV production
 ENV USE_SSL 1
