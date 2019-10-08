@@ -31,7 +31,7 @@ describe('server', () => {
   it('passes healthcheck', async () => {
     const resp = await server.inject({
       method: 'GET',
-      url: '/ok',
+      url: '/admin/ok',
     });
 
     expect(resp.statusCode).toEqual(200);
