@@ -337,7 +337,7 @@ export class LDAPEnvClass implements LDAP_ENV {
   LDAP_USER_DN: string = '';
   LDAP_SCOPE: string = '';
   LDAP_PASSWORD: string = '';
-  LDAP_PORT: string = '443';
+  LDAP_PORT: string = '3000';
 
   constructor(opts: {
     LDAP_URL?: any;
@@ -357,6 +357,6 @@ export class LDAPEnvClass implements LDAP_ENV {
         opts.LDAP_USER_DN || 'cn=svc_groupmgmt,cn=Users,dc=boston,cn=cob'),
       (this.LDAP_SCOPE = opts.LDAP_SCOPE || 'sub'),
       (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || '5!9ySn9gDN'),
-      (this.LDAP_PORT = opts.LDAP_PORT || 443);
+      (this.LDAP_PORT = opts.LDAP_PORT || 3000);
   }
 }

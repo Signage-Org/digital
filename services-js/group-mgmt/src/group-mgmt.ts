@@ -24,7 +24,7 @@ import { typeDefs } from './server/graphql/typeDefs';
 require('dotenv').config();
 
 const env = new LDAPEnvClass(process.env);
-const port = parseInt(env.LDAP_PORT || '443', 10);
+const port = parseInt(env.LDAP_PORT || '3000', 10);
 const ldapClient = ldap.createClient({
   url: env.LDAP_URL,
   reconnect: true,
