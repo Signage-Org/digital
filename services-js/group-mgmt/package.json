@@ -12,7 +12,7 @@
     "prebuild": "rimraf build",
     "build": "tsc",
     "prepare": "yarn run build",
-    "start": "node build/server/start",
+    "start": "node build/server",
     "codebuild-deploy": "npx -p ../../deploy-tools.tgz codebuild-service-deploy Dockerfile"
   },
   "jest": {
