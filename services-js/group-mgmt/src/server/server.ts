@@ -1,6 +1,5 @@
 /* eslint no-console: 0 */
 import Hapi from 'hapi';
-import Boom from 'boom';
 import Inert from 'inert';
 import fs from 'fs';
 import cleanup from 'node-cleanup';
@@ -76,6 +75,11 @@ const bindLdapClient = (force: Boolean = false) => {
       if (err) {
         console.log('ldapClient.bind err: ', err);
       }
+    });
+
+    ldapClient.on('idle', event => {
+      console.log('event: ', event);
+      console.log('Timed out \n ------------------');
     });
   }
 };
@@ -354,24 +358,8 @@ export async function makeServer() {
   server.route({
     method: 'GET',
     path: '/',
-    // handler: (_, h) => h.redirect(process.env.ROOT_REDIRECT_URL || '/death'),
     handler: () => 'ok',
   });
-
-  // small hack to keep people from finding the UI in prod, since it doesn’t
-  // work
-  if (
-    process.env.NODE_ENV === 'production' &&
-    process.env.MARRIAGE_CERTS_ENABLED !== '1'
-  ) {
-    server.route({
-      method: 'GET',
-      path: '/marriage/{p*}',
-      handler: () => {
-        throw Boom.notFound();
-      },
-    });
-  }
 
   server.route(adminOkRoute);
   await addGraphQl(server);
@@ -455,10 +443,15 @@ const resolvers = {
       // console.log('person: ', person, '\n --------');
       return person;
     },
-    async group(parent: any, args: { cn: string }) {
+    async group(parent: any, args: { cn: string; dns: string }) {
       if (parent) {
         console.log('parent: group');
       }
+      if (args.dns) {
+        console.log('dns: ', args.dns);
+      }
+      // console.log('dns: ', args);
+
       const value = args.cn;
       const filterParams: FilterOptions = new FilterOptionsClass({
         filterType: 'group',

@@ -45,7 +45,7 @@ export const typeDefs = `
   type Query {
     person(cn: String!): [Person]
     personSearch(term: String!): [Person]!
-    group(cn: String!): [Group]
+    group(cn: String! dns: [String]): [Group]
     groupSearch(term: String!): [Group]!
     isPersonInactive(people: [String!]!): [String]!
     Person(limit: Int!): [Person!]!

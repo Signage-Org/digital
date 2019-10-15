@@ -224,7 +224,7 @@ export class PersonClass implements Person {
   ismemberof: Array<[String]> = [];
   givenname: string = '';
   displayname: string = '';
-  inactive: Boolean = true;
+  inactive: Boolean = false;
   nsaccountlock: string = '';
   objectclass: Array<[string]> = [];
   uid: string | number = '';
@@ -263,14 +263,14 @@ export class PersonClass implements Person {
 
     (this.dn = opts.dn ? opts.dn : ''),
       (this.cn = opts.cn ? opts.cn : ''),
-      (this.mail = opts.mail ? opts.mail : ''),
+      (this.mail = opts.mail ? opts.mail.trim() : ''),
       (this.sn = opts.sn ? opts.sn : ''),
       (this.controls = controls),
       (this.ismemberof = members),
       (this.givenname = opts.givenname ? opts.givenname : ''),
       (this.displayname = opts.displayname ? opts.displayname : ''),
       (this.uid = opts.uid ? opts.uid : ''),
-      (this.inactive = convertToBool(opts.nsAccountLock, true)),
+      (this.inactive = convertToBool(opts.nsAccountLock, false)),
       (this.objectclass = objectclass);
   }
 }
