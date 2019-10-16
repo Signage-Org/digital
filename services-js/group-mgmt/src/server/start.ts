@@ -5,10 +5,16 @@
 
 require('dotenv').config();
 
-const start = require('../group-mgmt').default;
-console.log('start.server');
+try {
+  const start = require('../group-mgmt').default;
+  console.log('start.server');
 
-start().catch(err => {
-  console.error('Error starting server', err);
+  start().catch(err => {
+    console.error('Error starting server', err);
+    process.exit(1);
+  });
+  console.log('process.env: ', process.env);
+} catch (e) {
+  console.error(e);
   process.exit(-1);
-});
+}

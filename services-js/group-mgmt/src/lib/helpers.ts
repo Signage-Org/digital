@@ -1,14 +1,12 @@
 export const convertOptionalArray = val => (Array.isArray(val) ? val : [val]);
 
 /**
- *
  * @param {string} val - A string param
  * @return {boolean} A Boolean value
  * @description Converts a string Boolean back to its primative
  * @default {boolean} Return a Boolean value (false)
  *
  * @example
- *
  *     returnBool('FALSE', false);
  */
 export const returnBool = (val: String = 'FALSE') => {
@@ -23,7 +21,6 @@ export const returnBool = (val: String = 'FALSE') => {
 };
 
 /**
- *
  * @param {string} val - A string param
  * @param {boolean} base - A boolean param
  * @return {boolean} A Boolean value
@@ -31,7 +28,6 @@ export const returnBool = (val: String = 'FALSE') => {
  * @default {boolean} Return a Boolean value (false)
  *
  * @example
- *
  *     convertToBool('FALSE', true);
  */
 export const convertToBool = (val: String, base: Boolean) => {
@@ -49,13 +45,11 @@ export const convertToBool = (val: String, base: Boolean) => {
 };
 
 /**
- *
  * @param {object} keysMap - Object, key/value Object with renamed keys
  * @param {object} targetObj - Object whose keys you want to rename
  * @description Rename object keys using the keyMap object
  *
  * @example
- *
  *     renameObjectKeys(
  *      {
  *      dn: 'cn',
@@ -78,7 +72,6 @@ export const convertToBool = (val: String, base: Boolean) => {
  *       nsaccountlock: 'FALSE',
  *       isSponsor: 'TRUE',
  *     }
- *
  */
 export const renameObjectKeys = (keysMap, obj) => {
   const retObj: object = Object.keys(obj).reduce(
@@ -100,7 +93,6 @@ export const renameObjectKeys = (keysMap, obj) => {
  * @return {object} - Return object with the remapped keys and paired down to only the fields present in the sourceObj
  *
  * @example
- *
  *     remapObjKeys(
  *      {
  *        dn: '',
@@ -121,7 +113,6 @@ export const renameObjectKeys = (keysMap, obj) => {
  *      isMemberof: 'ismemberof',
  *      nsAccountLock: 'nsaccountlock',
  *     }
- *
  */
 export const remapObjKeys = (sourceObj, targetObj) => {
   const keyMapObj: Object = {};
@@ -157,3 +148,97 @@ export const abstractDN = (dn: String = '') => {
 
   return dnObj;
 };
+
+/**
+ *
+ * @param {object} arr - Array to chunk into an array of arrays
+ * @param {object} size - Interger value to chunk array into
+ * @description Chunk Array into an (2D) array of smaller arrays
+ * @return {object} - Return an array(2D) of arrays of chunked values
+ *
+ * @example
+ *     chunkArraySlice(
+ *      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+ *      5
+ *     );
+ *     return [
+ *      [ 1, 2, 3, 4, 5 ],
+ *      [ 6, 7, 8, 9, 10 ],
+ *      [ 11, 12, 13 ]
+ *     ];
+ */
+export const chunkArray = (arr: Array<[]> = [], size: Number) => {
+  let result: any = [];
+  let castSize: any = size;
+
+  for (let i = 0; i < arr.length; i += castSize) {
+    result.push(arr.slice(i, i + castSize));
+  }
+  return result;
+};
+
+/**
+ *
+ * @param {object} obj - Object to filter by keys
+ * @param {object} keys - Array of keys to filter(pair-down) the target object
+ * @description Return an object filtered by the requested keys
+ * @return {object} - Return an object filtered by the requested keys
+ *
+ * @example
+ *    filterObj(
+ *      {
+ *        URL: '',
+ *        PORT: '',
+ *        SCOPE: '',
+ *        NAME: '',
+ *        TITLE: '',
+ *        LABEL: '',
+ *      },
+ *      ['URL', 'PORT', 'PORT']
+ *    );
+ *    return {
+ *      {
+ *        URL: '',
+ *        PORT: '',
+ *        SCOPE: '',
+ *      }
+ *    }
+ */
+export const filterObj = (obj: object, keys: Array<string>): object => {
+  let retObj = {};
+  for (let i = 0; i < keys.length; i++) {
+    if (obj.hasOwnProperty(keys[i])) {
+      const thisKey: string = keys[i];
+      retObj[thisKey] = obj[thisKey];
+    }
+  }
+  return retObj;
+};
+
+/**
+ *
+ * @param {object} obj - Object used to get matching keys
+ * @param {object} str - String partial used to lookup matching keys
+ * @description Get an array of object keys matching a string partial
+ * @return {object} - Returns an array of keys matching the string partial input
+ *
+ * @example
+ *    filteredObjKeys(
+ *      {
+ *        LDAP_URL: '',
+ *        LDAP_PORT: '',
+ *        LDAP_SCOPE: '',
+ *        NAME: '',
+ *        TITLE: '',
+ *        LABEL: '',
+ *      },
+ *      'LDAP_'
+ *    );
+ *    return [
+ *      'LDAP_URL', 'LDAP_PORT', 'LDAP_SCOPE'
+ *    ]
+ */
+export const filteredObjKeys = (obj: {}, str: string) =>
+  Object.keys(obj).filter(key => {
+    return key.indexOf(str) > -1;
+  });

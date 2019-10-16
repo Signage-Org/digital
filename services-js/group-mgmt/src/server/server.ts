@@ -29,7 +29,12 @@ import {
   ResponseClass,
   LDAPEnvClass,
 } from './interfaces';
-import { renameObjectKeys, remapObjKeys, returnBool } from '../lib/helpers';
+import {
+  renameObjectKeys,
+  remapObjKeys,
+  returnBool,
+  abstractDN,
+} from '../lib/helpers';
 import { typeDefs } from './graphql/typeDefs';
 
 // import { makeRoutesForNextApp, makeNextHandler } from '@cityofboston/hapi-next';
@@ -51,7 +56,6 @@ import { Source } from './graphql';
 
 require('dotenv').config();
 const env = new LDAPEnvClass(process.env);
-console.log('env: ', env);
 const ldapClient = ldap.createClient({
   url: env.LDAP_URL,
   reconnect: true,
@@ -67,7 +71,7 @@ declare module 'hapi' {
   }
 }
 
-const port = parseInt(process.env.PORT || '3000', 10);
+const port = parseInt(process.env.PORT || env.LDAP_PORT, 10);
 
 const bindLdapClient = (force: Boolean = false) => {
   if (env.LDAP_BIN_DN === 'cn=svc_groupmgmt,cn=Users,o=localHDAPDev' || force) {
@@ -375,10 +379,13 @@ const resolvers = {
     async updateGroupMembers() {
       try {
         const opts = arguments[1];
+        const memberCheck =
+          typeof opts.uniquemember === 'object' && opts.uniquemember.length > 0;
+        const members = memberCheck ? opts.uniquemember : [opts.uniquemember];
         const changeOpts = new ldap.Change({
           operation: opts.operation,
           modification: {
-            uniquemember: [opts.uniquemember],
+            uniquemember: members,
           },
         });
         // console.log('updateGroupMembers > updateGroupMembers > changeOpts: ', changeOpts); // remapObjKeys
@@ -398,8 +405,8 @@ const resolvers = {
       }
 
       const retArr: Array<[]> = [];
-      const promises = await args.people.map(async cn => {
-        const value = cn.indexOf('=') > -1 ? cn.split('=')[1] : cn;
+      const promises = await args.people.map(async (cn: any) => {
+        const value = cn.indexOf('=') > -1 ? abstractDN(cn)['cn'][0] : cn;
         const in_active = await isMemberActive(value);
         if (in_active === false) {
           retArr.push(cn);

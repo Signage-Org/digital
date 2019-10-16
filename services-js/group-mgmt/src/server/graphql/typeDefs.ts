@@ -55,7 +55,7 @@ export const typeDefs = `
   type Mutation {
     updateGroupMembers(
       dn: String!,
-			cn: String!, 
+			binding: String!, 
 			operation: String!
 			uniquemember: String!
     ): Response

@@ -54,7 +54,7 @@ export class ResponseClass implements Response {
   constructor(opts: { message?: any; code?: any; body?: any }) {
     (this.message = opts.message ? opts.message : '200 Ok'),
       (this.code = opts.code ? opts.code : '200'),
-      (this.body = opts.body ? opts.body : {});
+      (this.body = opts.body ? opts.body : { error: '', data: '' });
   }
 }
 
