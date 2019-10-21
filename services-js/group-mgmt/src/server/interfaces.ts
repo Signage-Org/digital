@@ -126,6 +126,21 @@ export class objectClassArray {
   }
 }
 
+// export interface ContainerAttributes {
+//   type: String;
+//   value: Array<[any]>;
+// }
+
+// export interface ContainerGroup {
+//   objectName?: String;
+//   attributes?: Array<[ContainerAttributes]>;
+// }
+
+// export class ContainerGroupClass implements ContainerGroup {
+//   objectName: String = '';
+//   attributes: Array<[any]>;
+// }
+
 export interface Group {
   dn?: string;
   cn?: string;
@@ -280,6 +295,7 @@ export interface FilterOptions {
   field: string;
   value: string;
   allowInactive: boolean;
+  dns: Array<any>;
 }
 
 export class FilterOptionsClass implements FilterOptions {
@@ -287,24 +303,29 @@ export class FilterOptionsClass implements FilterOptions {
   field: string = 'cn';
   value: string = '';
   allowInactive: boolean = false;
+  dns: [];
 
   constructor(opts: {
     filterType?: any;
     field?: any;
     value?: any;
     allowInactive?: any;
+    dns?: any;
   }) {
     (this.filterType = opts.filterType ? opts.filterType : ''),
       (this.field = opts.field ? opts.field : ''),
       (this.value = opts.value ? opts.value : ''),
+      (this.dns = opts.dns ? opts.dns : []),
       (this.allowInactive = opts.allowInactive ? opts.allowInactive : false);
   }
 }
 
 export const LdapFilters = {
   groups: {
-    default: '(objectClass=groupOfUniqueNames)',
-    pre: '(&(objectClass=groupOfUniqueNames)(',
+    default:
+      '(|(objectClass=groupOfUniqueNames)(objectClass=container)(objectClass=organizationalRole)(objectClass=top))',
+    pre:
+      '(&(|(objectClass=groupOfUniqueNames)(objectClass=container)(objectClass=organizationalRole)(objectClass=top))(',
     post: '))',
   },
   person: {
@@ -354,6 +375,6 @@ export class LDAPEnvClass implements LDAP_ENV {
       (this.LDAP_USER_DN = opts.LDAP_USER_DN || ''),
       (this.LDAP_SCOPE = opts.LDAP_SCOPE || 'sub'),
       (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || ''),
-      (this.LDAP_PORT = opts.LDAP_PORT || 3000);
+      (this.LDAP_PORT = opts.LDAP_PORT || 4000);
   }
 }
