@@ -180,7 +180,6 @@ export class GroupClass implements Group {
         ? getOnlyActiveMembers(opts.uniquemember)
         : []
     );
-    // const members = opts.uniquemember;
     const controls = convertOptionalArray(opts.controls ? opts.controls : []);
     const owner = convertOptionalArray(opts.owner ? opts.owner : []);
     const objectclass = convertOptionalArray(
@@ -190,7 +189,7 @@ export class GroupClass implements Group {
     (this.dn = opts.dn ? opts.dn : ''),
       (this.cn = opts.cn ? opts.cn : ''),
       (this.controls = controls),
-      (this.uniquemember = members),
+      (this.uniquemember = opts.uniquemember ? members : []),
       (this.owner = owner),
       (this.actualdn = opts.actualdn ? opts.actualdn : ''),
       (this.entrydn = opts.entrydn ? opts.entrydn : ''),
@@ -308,9 +307,9 @@ export class FilterOptionsClass implements FilterOptions {
 export const LdapFilters = {
   groups: {
     default:
-      '(|(objectClass=groupOfUniqueNames)(objectClass=container)(objectClass=organizationalRole)(objectClass=top))',
+      '(|(objectClass=groupOfUniqueNames)(objectClass=container)(objectClass=organizationalRole))',
     pre:
-      '(&(|(objectClass=groupOfUniqueNames)(objectClass=container)(objectClass=organizationalRole)(objectClass=top))(',
+      '(&(|(objectClass=groupOfUniqueNames)(objectClass=container)(objectClass=organizationalRole))(',
     post: '))',
   },
   person: {

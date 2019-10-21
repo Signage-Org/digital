@@ -96,7 +96,6 @@ const search_promise = (err, res) => {
     const entries: object[] = Array();
     const refInstance = new objectClassArray({});
     res.on('searchEntry', entry => {
-      // console.log('ENTRY: ', entry);
       let currEntry = entry.object || {};
       currEntry = renameObjectKeys(
         remapObjKeys(refInstance, currEntry),
@@ -124,6 +123,8 @@ const search_promise = (err, res) => {
         const Group: Group = new GroupClass(currEntry);
         entries.push(Group);
       }
+
+      // console.log('entry.object: ', entry.object, '\n .........');
     });
 
     res.on('error', err => {
@@ -510,7 +511,7 @@ const resolvers = {
       if (parent) {
         console.log('Query > parent: personSearch');
       }
-      if (args.dns) {
+      if (args.dns && args.dns.length > 0) {
         console.log('Query > personSearch > dns: ', args.dns);
       }
       // console.log('personSearch: (term) > ', args, args.term);
@@ -575,7 +576,7 @@ const resolvers = {
       if (parent) {
         console.log('parent: groups');
       }
-      if (args.dns) {
+      if (args.dns && args.dns.length > 0) {
         dns = await convertDnsToGroupDNs(args.dns);
         // console.log('dns: ', dns[dns.length-1]);
       }
@@ -591,6 +592,8 @@ const resolvers = {
       });
 
       const groups: any = await searchWrapper(['all'], filterParams);
+      // console.log('groups: ', groups, '\n --------', filterParams);
+      // console.log('filterParams: ', filterParams);
       if (args.activemembers && args.activemembers === true) {
         // console.log('Query > groupSearch > activemembers: ', args.activemembers);
         await groups.forEach(async group => {
