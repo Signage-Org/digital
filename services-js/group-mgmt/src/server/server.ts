@@ -3,16 +3,11 @@ import Hapi from 'hapi';
 import Inert from 'inert';
 import fs from 'fs';
 import cleanup from 'node-cleanup';
-// import Path from 'path';
-// import { ApolloServer } from 'apollo-server-hapi';
 import {
   loggingPlugin,
   adminOkRoute,
-  // makeStaticAssetRoutes,
   headerKeys,
   HeaderKeysOptions,
-  // persistentQueryPlugin,
-  // HapiGraphqlContextFunction,
 } from '@cityofboston/hapi-common';
 import { makeExecutableSchema, ApolloServer } from 'apollo-server-hapi';
 import ldap from 'ldapjs';
@@ -33,27 +28,11 @@ import {
   renameObjectKeys,
   remapObjKeys,
   returnBool,
-  // convertToBool,
   abstractDN,
 } from '../lib/helpers';
 import { typeDefs } from './graphql/typeDefs';
-
-// import { makeRoutesForNextApp, makeNextHandler } from '@cityofboston/hapi-next';
-
-// import {
-//   GRAPHQL_PATH_KEY,
-//   API_KEY_CONFIG_KEY,
-//   HAPI_INJECT_CONFIG_KEY,
-// } from '@cityofboston/next-client-common';
-
 import decryptEnv from '@cityofboston/srv-decrypt-env';
-// import schema, { Context, Source } from './graphql';
 import { Source } from './graphql';
-// import { Context, Source } from './graphql';
-// import { PACKAGE_SRC_ROOT } from './util';
-// import { AnnotatedFilePart, PACKAGE_SRC_ROOT } from './util';
-// import { makeEmailTemplates } from './email/EmailTemplates';
-// import { UploadPayload, UploadResponse } from '../lib/upload-types';
 
 require('dotenv').config();
 const env = new LDAPEnvClass(process.env);
@@ -180,20 +159,27 @@ const getFilterValue = (filter: FilterOptions) => {
     if (type === 'group') {
       return `${LdapFilters.groups.pre}cn=*${filter.value}*))`;
     } else {
-      return `(&(objectClass=${objClass})(|(displayName=*${filter.value}*)(sn=${
-        filter.value
-      }*)(givenname=${filter.value}*)(cn=${filter.value}*)))`;
+      if (filter.allowInactive === false) {
+        return `(&(objectClass=${objClass})(${
+          LdapFilters.person.inactive
+        }|(displayname=*${filter.value}*)(sn=*${filter.value}*)(givenname=*${
+          filter.value
+        }*)(cn=*${filter.value}*)))`;
+      } else {
+        return `(&(objectClass=${objClass})(|(displayName=*${
+          filter.value
+        }*)(sn=${filter.value}*)(givenname=${filter.value}*)(cn=${
+          filter.value
+        }*)))`;
+      }
     }
   };
+  console.log('getFilterValue > filter: ', filter);
 
   switch (filter.filterType) {
     case 'person':
       if (filter.allowInactive === false) {
-        const retStr = `${LdapFilters.person.pre}${
-          LdapFilters.person.inactive
-        }cn=${filter.value}${LdapFilters.person.post}`;
-        // console.log('filter.filterType > retStr: ', retStr);
-        return retStr;
+        return searchFilterStr(filter.filterType);
       }
 
       if (filter.value.length === 0) {
@@ -250,7 +236,7 @@ const getDnsSearchResults = async (base_dn, filter, filterQryParams) => {
 
 const getFilteredResults = async (filter: FilterOptions, filterQryParams) => {
   const promises = filter.dns.map(async value => {
-    // console.log('\n[------------]-------', value.group.dn);
+    // console.log('\n[-------------------', value.group.dn);
     return await getDnsSearchResults(value.group.dn, filter, filterQryParams);
   });
   const promisedRes = await Promise.all(promises);
@@ -271,13 +257,13 @@ const searchWrapper = async (
 ) => {
   const base_dn = env.LDAP_BASE_DN;
   const filterValue = getFilterValue(filter);
-  // console.log('filterValue: ', filterValue);
+  console.log('filterValue: ', filterValue);
   // console.log('filter: ', filter);
   const thisAttributes =
     typeof attributes === 'object' && attributes.length > 1
       ? attributes
       : setAttributes(attributes, filter.filterType);
-  // console.log('thisAttributes: ', thisAttributes);
+  console.log('thisAttributes: ', thisAttributes);
   const filterQryParams = {
     scope: 'sub',
     attributes: thisAttributes,
@@ -288,7 +274,7 @@ const searchWrapper = async (
   if (filter.dns.length > 0) {
     // console.log('searchWrapper > filter.dns: ', filter.dns);
     try {
-      // console.log('filter [][][][][]: ', filter);
+      // console.log('filter: ', filter);
       results = await getFilteredResults(filter, filterQryParams);
       // console.log('filteredResults: ', results);
     } catch (err) {
@@ -399,51 +385,6 @@ export async function makeServer() {
 
   await server.register(Inert);
 
-  // const contextFunction: HapiGraphqlContextFunction<Context> = ({
-  //   request,
-  // }) => {
-  //   const source = request.auth.credentials
-  //     ? request.auth.credentials.source
-  //     : 'unknown';
-
-  //   return {
-  //     // registryDb: registryDbFactory.registryDb(),
-  //     // stripe,
-  //     // emails,
-  //     // rollbar,
-  //     source,
-  //   };
-  // };
-
-  // const apolloServer = new ApolloServer({
-  //   schema,
-  //   context: contextFunction,
-  //   extensions: [rollbarErrorExtension(rollbar)],
-  // });
-
-  // await apolloServer.applyMiddleware({
-  //   app: server,
-  //   route: {
-  //     cors: true,
-  //     auth:
-  //       Object.keys(apiKeys).length || process.env.NODE_ENV == 'staging'
-  //         ? 'apiHeaderKeys'
-  //         : false,
-  //   },
-  // });
-
-  // await server.register({
-  //   plugin: persistentQueryPlugin,
-  //   options: {
-  //     queriesDirPath: Path.resolve(
-  //       PACKAGE_SRC_ROOT,
-  //       'server',
-  //       'queries',
-  //       'fulfillment'
-  //     ),
-  //   },
-  // });
-
   server.route({
     method: 'GET',
     path: '/',
@@ -506,7 +447,7 @@ const resolvers = {
     },
     async personSearch(
       parent: any,
-      args: { term: string; dns: Array<string> }
+      args: { term: string; dns: Array<string>; allowInactive: Boolean }
     ) {
       if (parent) {
         console.log('Query > parent: personSearch');
@@ -521,9 +462,10 @@ const resolvers = {
         filterType: 'person',
         field: 'search',
         value: term,
-        allowInactive: true,
+        allowInactive: args.allowInactive ? args.allowInactive : false,
       });
       const persons = await searchWrapper(['all'], filterParams);
+      // console.log('filterParams: ', filterParams);
       // console.log('persons: ', persons, '\n --------');
       return persons;
     },
@@ -570,7 +512,12 @@ const resolvers = {
     },
     async groupSearch(
       parent: any,
-      args: { term: string; dns: Array<string>; activemembers: any }
+      args: {
+        term: string;
+        dns: Array<string>;
+        activemembers: any;
+        allowInactive: Boolean;
+      }
     ) {
       let dns: any = [];
       if (parent) {
@@ -587,7 +534,7 @@ const resolvers = {
         filterType: 'group',
         field: 'search',
         value,
-        allowInactive: false,
+        allowInactive: args.allowInactive ? args.allowInactive : false,
         dns,
       });
 
