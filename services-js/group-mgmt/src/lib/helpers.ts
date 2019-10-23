@@ -9,7 +9,7 @@ export const convertOptionalArray = val => (Array.isArray(val) ? val : [val]);
  * @example
  *     returnBool('FALSE', false);
  */
-export const returnBool = (val: String = 'FALSE') => {
+export const returnBool = (val: String = 'FALSE'): boolean => {
   switch (val.toLocaleLowerCase()) {
     case 'true':
       return true;
@@ -30,12 +30,13 @@ export const returnBool = (val: String = 'FALSE') => {
  * @example
  *     convertToBool('FALSE', true);
  */
-export const convertToBool = (val: String, base: Boolean) => {
-  let retVal: Boolean = true;
+export const convertToBool = (val: String, base: boolean): boolean => {
+  let retVal: boolean = true;
   try {
     retVal = returnBool(val);
   } catch (err) {
-    // console.log('Error converting to Boolean: convertToBool ', err);
+    // eslint-disable-next-line no-console
+    console.error('Error converting to Boolean: convertToBool ', err);
   }
 
   if (base && typeof base === 'boolean') {
@@ -73,7 +74,7 @@ export const convertToBool = (val: String, base: Boolean) => {
  *       isSponsor: 'TRUE',
  *     }
  */
-export const renameObjectKeys = (keysMap, obj) => {
+export const renameObjectKeys = (keysMap: object, obj) => {
   const retObj: object = Object.keys(obj).reduce(
     (acc, key) => ({
       ...acc,
@@ -114,7 +115,7 @@ export const renameObjectKeys = (keysMap, obj) => {
  *      nsAccountLock: 'nsaccountlock',
  *     }
  */
-export const remapObjKeys = (sourceObj, targetObj) => {
+export const remapObjKeys = (sourceObj: object, targetObj: object): object => {
   const keyMapObj: Object = {};
   const optKeys = Object.keys(targetObj).map(key => key.toLocaleLowerCase());
   for (const key in sourceObj) {
@@ -157,7 +158,7 @@ export const abstractDN = (dn: String = '') => {
  * @return {object} - Return an array(2D) of arrays of chunked values
  *
  * @example
- *     chunkArraySlice(
+ *     chunkArray(
  *      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
  *      5
  *     );
@@ -167,7 +168,7 @@ export const abstractDN = (dn: String = '') => {
  *      [ 11, 12, 13 ]
  *     ];
  */
-export const chunkArray = (arr: Array<[]> = [], size: Number) => {
+export const chunkArray = (arr: Array<[]> = [], size: Number): object => {
   let result: any = [];
   let castSize: any = size;
 
@@ -238,7 +239,7 @@ export const filterObj = (obj: object, keys: Array<string>): object => {
  *      'LDAP_URL', 'LDAP_PORT', 'LDAP_SCOPE'
  *    ]
  */
-export const filteredObjKeys = (obj: {}, str: string) =>
+export const filteredObjKeys = (obj: {}, str: string): string[] =>
   Object.keys(obj).filter(key => {
     return key.indexOf(str) > -1;
   });

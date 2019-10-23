@@ -304,6 +304,21 @@ export class FilterOptionsClass implements FilterOptions {
   }
 }
 
+export interface filterParams {
+  filterParams: FilterOptionsClass;
+}
+
+export interface group {
+  dn: string;
+  cn: string;
+}
+
+export interface DNs {
+  cn: string;
+  filterParams: filterParams;
+  group: group;
+}
+
 export const LdapFilters = {
   groups: {
     default:

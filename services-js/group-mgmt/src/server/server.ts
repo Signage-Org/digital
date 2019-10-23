@@ -23,6 +23,7 @@ import {
   CustomAttributes,
   ResponseClass,
   LDAPEnvClass,
+  // DNs,
 } from './interfaces';
 import {
   renameObjectKeys,
@@ -174,7 +175,7 @@ const getFilterValue = (filter: FilterOptions) => {
       }
     }
   };
-  console.log('getFilterValue > filter: ', filter);
+  // console.log('getFilterValue > filter: ', filter);
 
   switch (filter.filterType) {
     case 'person':
@@ -257,13 +258,13 @@ const searchWrapper = async (
 ) => {
   const base_dn = env.LDAP_BASE_DN;
   const filterValue = getFilterValue(filter);
-  console.log('filterValue: ', filterValue);
+  // console.log('filterValue: ', filterValue);
   // console.log('filter: ', filter);
   const thisAttributes =
     typeof attributes === 'object' && attributes.length > 1
       ? attributes
       : setAttributes(attributes, filter.filterType);
-  console.log('thisAttributes: ', thisAttributes);
+  // console.log('thisAttributes: ', thisAttributes);
   const filterQryParams = {
     scope: 'sub',
     attributes: thisAttributes,
@@ -564,6 +565,12 @@ const resolvers = {
       } else {
         return groups;
       }
+    },
+    async getMinimumUserGroups(parent: any, args: { dns: Array<string> }) {
+      if (parent) {
+        console.log('parent: groups');
+      }
+      return await convertDnsToGroupDNs(args.dns);
     },
   },
 };
