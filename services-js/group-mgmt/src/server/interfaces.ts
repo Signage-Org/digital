@@ -374,6 +374,6 @@ export class LDAPEnvClass implements LDAP_ENV {
       (this.LDAP_USER_DN = opts.LDAP_USER_DN || ''),
       (this.LDAP_SCOPE = opts.LDAP_SCOPE || 'sub'),
       (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || ''),
-      (this.LDAP_PORT = opts.LDAP_PORT || 4000);
+      (this.LDAP_PORT = opts.LDAP_PORT || 3000);
   }
 }
