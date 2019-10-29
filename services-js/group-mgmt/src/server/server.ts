@@ -30,6 +30,7 @@ import {
   remapObjKeys,
   returnBool,
   abstractDN,
+  isDNInOUs,
 } from '../lib/helpers';
 import { typeDefs } from './graphql/typeDefs';
 import decryptEnv from '@cityofboston/srv-decrypt-env';
@@ -417,11 +418,7 @@ const resolvers = {
           // console.log('n\ dns DN: ', dns, dn_list);
         }
 
-        let splitDN = opts.dn.split(',');
-        splitDN.shift();
-        splitDN = splitDN.toString();
-        // console.log('splitDN: ', splitDN, dn_list.indexOf(splitDN));
-        if (dn_list.indexOf(splitDN) === -1) {
+        if (isDNInOUs(opts.dn, dn_list)) {
           // console.log('Heyooo!');
           return new ResponseClass({});
         }
@@ -446,6 +443,11 @@ const resolvers = {
     },
   },
   Query: {
+    async convertOUsToContainers(_parent, args: { ous: Array<string> }) {
+      const dns = await convertDnsToGroupDNs(args.ous);
+      const dn_list = dns.map(entry => entry.group.dn);
+      return dn_list;
+    },
     async isPersonInactive(parent: any, args: any) {
       if (parent) {
         console.log('parent: personSearch');

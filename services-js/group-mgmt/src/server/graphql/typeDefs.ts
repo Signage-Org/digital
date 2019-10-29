@@ -72,6 +72,7 @@ export const typeDefs = `
     groupSearch(term: String! dns: [String] activemembers: Boolean allowsInactive: Boolean): [Group]!
     isPersonInactive(people: [String!]!): [String]!
     getMinimumUserGroups(dns: [String]!): [DNs]!
+    convertOUsToContainers(ous: [String]!): [String]!
 	}
 	
   # Defines all available mutations.

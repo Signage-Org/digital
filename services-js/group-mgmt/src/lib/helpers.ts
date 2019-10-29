@@ -243,3 +243,11 @@ export const filteredObjKeys = (obj: {}, str: string): string[] =>
   Object.keys(obj).filter(key => {
     return key.indexOf(str) > -1;
   });
+
+export const isDNInOUs = (dn: string, dns: Array<string>) => {
+  let splitDN: any = dn.split(',');
+  splitDN.shift();
+  splitDN = splitDN.toString();
+
+  return dns.indexOf(splitDN) === -1;
+};
