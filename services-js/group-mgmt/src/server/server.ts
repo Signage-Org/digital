@@ -407,7 +407,24 @@ const resolvers = {
       // console.log('updateGroupMembers: ');
       try {
         const opts = arguments[1];
+        let dns: any = [];
+        let dn_list: any = [];
         // console.log('updateGroupMembers opts: ', opts);
+
+        if (opts.dns && opts.dns.length > 0) {
+          dns = await convertDnsToGroupDNs(opts.dns);
+          dn_list = dns.map(entry => entry.group.dn);
+          // console.log('n\ dns DN: ', dns, dn_list);
+        }
+
+        let splitDN = opts.dn.split(',');
+        splitDN.shift();
+        splitDN = splitDN.toString();
+        // console.log('splitDN: ', splitDN, dn_list.indexOf(splitDN));
+        if (dn_list.indexOf(splitDN) === -1) {
+          // console.log('Heyooo!');
+          return new ResponseClass({});
+        }
         const memberCheck =
           typeof opts.uniquemember === 'object' && opts.uniquemember.length > 0;
         const members = memberCheck ? opts.uniquemember : [opts.uniquemember];
@@ -512,7 +529,7 @@ const resolvers = {
       return groups;
     },
     async groupSearch(
-      parent: any,
+      _parent: any,
       args: {
         term: string;
         dns: Array<string>;
@@ -521,12 +538,12 @@ const resolvers = {
       }
     ) {
       let dns: any = [];
-      if (parent) {
-        console.log('parent: groups');
-      }
+      let dn_list: any = [];
       if (args.dns && args.dns.length > 0) {
         dns = await convertDnsToGroupDNs(args.dns);
-        // console.log('dns: ', dns[dns.length-1]);
+        dn_list = dns.map(entry => entry.group.dn);
+        // console.log('dns: ', dns[dns.length-1], dns);
+        // console.log('dns DN: ', dn_list);
       }
       // console.log('Query > groupSearch > dns: ', args.dns, dns);
 
@@ -539,9 +556,12 @@ const resolvers = {
         dns,
       });
 
-      const groups: any = await searchWrapper(['all'], filterParams);
+      let groups: any = await searchWrapper(['all'], filterParams);
+      groups = groups.filter(entry => dn_list.indexOf(entry.dn) === -1);
       // console.log('groups: ', groups, '\n --------', filterParams);
       // console.log('filterParams: ', filterParams);
+      // console.log('groups: ', '\n', groups.filter(entry => dn_list.indexOf(entry.dn) === -1));
+      // console.log('groups: ', groups, '\n');
       if (args.activemembers && args.activemembers === true) {
         // console.log('Query > groupSearch > activemembers: ', args.activemembers);
         await groups.forEach(async group => {
