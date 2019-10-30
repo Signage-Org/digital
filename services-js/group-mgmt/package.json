@@ -5,7 +5,7 @@
   "private": true,
   "license": "CC0-1.0",
   "scripts": {
-    "dev": "yarn run prebuild && tsc-watch -p tsconfig.server.json --onSuccess \"yarn run start\"",
+    "dev": "NODE_ENV=development yarn run prebuild && tsc-watch -p tsconfig.server.json --onSuccess \"yarn run start\"",
     "pretest": "tsc --noEmit",
     "test": "jest",
     "watch": "tsc-watch --preserveWatchOutput",

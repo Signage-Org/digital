@@ -348,6 +348,7 @@ export interface LDAP_ENV {
   LDAP_SCOPE?: string;
   LDAP_PASSWORD?: string;
   LDAP_PORT?: string;
+  LDAP_CERT?: string;
 }
 
 export class LDAPEnvClass implements LDAP_ENV {
@@ -358,6 +359,7 @@ export class LDAPEnvClass implements LDAP_ENV {
   LDAP_SCOPE: string = '';
   LDAP_PASSWORD: string = '';
   LDAP_PORT: string = '';
+  LDAP_CERT: string = '';
 
   constructor(opts: {
     LDAP_URL?: any;
@@ -367,6 +369,7 @@ export class LDAPEnvClass implements LDAP_ENV {
     LDAP_SCOPE?: any;
     LDAP_PASSWORD?: any;
     LDAP_PORT?: any;
+    LDAP_CERT?: any;
   }) {
     (this.LDAP_URL = opts.LDAP_URL || ''),
       (this.LDAP_BASE_DN = opts.LDAP_BASE_DN || ''),
@@ -374,6 +377,7 @@ export class LDAPEnvClass implements LDAP_ENV {
       (this.LDAP_USER_DN = opts.LDAP_USER_DN || ''),
       (this.LDAP_SCOPE = opts.LDAP_SCOPE || 'sub'),
       (this.LDAP_PASSWORD = opts.LDAP_PASSWORD || ''),
-      (this.LDAP_PORT = opts.LDAP_PORT || 3000);
+      (this.LDAP_PORT = opts.LDAP_PORT || 3000),
+      (this.LDAP_CERT = opts.LDAP_CERT || '');
   }
 }

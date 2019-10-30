@@ -23,7 +23,6 @@ import {
   CustomAttributes,
   ResponseClass,
   LDAPEnvClass,
-  // DNs,
 } from './interfaces';
 import {
   renameObjectKeys,
@@ -38,9 +37,23 @@ import { Source } from './graphql';
 
 require('dotenv').config();
 const env = new LDAPEnvClass(process.env);
+
+let tlsOptions = {};
+if (
+  env.LDAP_CERT &&
+  typeof env.LDAP_CERT === 'string' &&
+  env.LDAP_CERT.length > 0
+) {
+  tlsOptions = {
+    ca: fs.readFileSync(env.LDAP_CERT),
+    rejectUnauthorized: false,
+  };
+}
+
 const ldapClient = ldap.createClient({
   url: env.LDAP_URL,
   reconnect: true,
+  tlsOptions,
 });
 
 type Credentials = {
@@ -56,10 +69,7 @@ declare module 'hapi' {
 const port = parseInt(process.env.PORT || env.LDAP_PORT, 10);
 
 const bindLdapClient = (_force: Boolean = false) => {
-  if (
-    env.LDAP_BIN_DN === 'cn=svc_groupmgmt,cn=Users,o=localHDAPDev' ||
-    _force
-  ) {
+  if (env.LDAP_BIN_DN !== 'cn=admin,dc=boston,dc=cob' || _force) {
     ldapClient.bind(env.LDAP_BIN_DN, env.LDAP_PASSWORD, function(err) {
       if (err) {
         console.log('ldapClient.bind err: ', err);
@@ -295,6 +305,7 @@ const searchWrapper = async (
         reject();
       }
       // console.log('Filter Type: ', filter.filterType, 'Field: ', filter.field, ' | Search Val: ', filter.value, ' | env.LDAP_BASE_DN: ', env.LDAP_BASE_DN);
+      // console.log('ldapClient: ', ldapClient);
       ldapClient.search(base_dn, filterQryParams, function(err, res) {
         if (err) {
           console.log('ldapsearch error: ', err);
@@ -489,12 +500,9 @@ const resolvers = {
       // console.log('persons: ', persons, '\n --------');
       return persons;
     },
-    async person(parent: any, args: { cn: string; dns: Array<string> }) {
+    async person(parent: any, args: { cn: string; _dns: Array<string> }) {
       if (parent) {
         console.log('Query > person > parent: person');
-      }
-      if (args.dns) {
-        console.log('Query > person > person > dns: ', args.dns);
       }
       const value = args.cn.indexOf('=') > -1 ? args.cn.split('=')[1] : args.cn;
       // console.log('value: ', value);
